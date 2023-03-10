@@ -1,5 +1,7 @@
 const { request, response } = require('express');
 const Db = require('../models');
+const bcryptjs = require('bcryptjs');
+
 
 class CompanyController {
 
@@ -63,10 +65,34 @@ class CompanyController {
             })
         }
     }
-    static async saveCompany(req = request, res = response) {
+    static saveCompany(req = request, res = response) {
         try {
-            return res.json({
-                ...req.body
+            const { name, owner_name, slug, summary, country, state, city, address, email, password } = req.body;
+            Db.model('Company').create({
+                name,
+                owner_name,
+                slug,
+                summary
+            }).then(async (company) => {
+                const [addr, usuario] = await Promise.all([
+                    Db.model('Address').create({
+                        country,
+                        state,
+                        city,
+                        address,
+                    }),
+                    Db.model('Usuario').create({
+                        email,
+                        password: bcryptjs.hashSync(password, bcryptjs.genSaltSync(10)),
+                    }),
+                ]);
+                usuario.setRols(2);
+                company.setAddress(addr);
+                company.setUsuario(usuario);
+            });
+            return res.status(201).json({
+                ok: true,
+                msg: 'Compañia creada correctamente'
             })
         } catch (error) {
             console.log(error);
@@ -78,7 +104,9 @@ class CompanyController {
     }
     static async updateCompany(req = request, res = response) {
         try {
-
+            return res.json({
+                ...req.body
+            })
         } catch (error) {
             console.log(error);
             return res.status(500).json({
