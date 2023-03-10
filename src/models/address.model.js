@@ -1,23 +1,30 @@
 const { DataTypes } = require('sequelize');
 const Db = require('../config/db.config');
 
-const Usuario = Db.define('Usuario', {
+const Address = Db.define('Address', {
     id: {
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement: true
+    },
+    country: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },    
-    email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-    },
-    password: {
+    state: {
         type: DataTypes.STRING,
         allowNull: false,
-    },
-},{tableName:'usuarios'});
+    },    
+    city: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },    
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },    
+},{tableName:'addresses'});
 
-module.exports = Usuario;
+module.exports = Address;
 
 

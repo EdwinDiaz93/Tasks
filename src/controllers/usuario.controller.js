@@ -63,9 +63,9 @@ class UsuarioController {
     static async saveUsuario(req = request, res = response) {
         try {
 
-            const { email, username, password } = req.body;
+            const { email, password } = req.body;
 
-            const usuario = { email, username, password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)) };
+            const usuario = { email, password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)) };
 
             await Db.model('Usuario').create(usuario);
             
@@ -86,7 +86,7 @@ class UsuarioController {
     static async updateUsuario(req = request, res = response) {
         try {
             const { id } = req.params;
-            const { username, email, password } = req.body;
+            const { email, password } = req.body;
             const usuarioDb = await Db.model('Usuario').findByPk(id);
             if (!usuarioDb)
                 return res.status(404).json({
@@ -95,7 +95,6 @@ class UsuarioController {
                 });
 
             await usuarioDb.update({
-                username,
                 email,
                 password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
             })

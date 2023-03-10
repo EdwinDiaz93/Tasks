@@ -18,13 +18,7 @@ usuarioRouter.delete('/:id',
     [validateToken, validateRols(['SuperAdmin'])],
     UsuarioController.deleteUsuario);
 
-usuarioRouter.post('/',
-    body('username')
-        .not()
-        .isEmpty()
-        .withMessage('El campo username es obligatorio')
-        .isLength({ min: 5 })
-        .withMessage('El campo username debe tener almenos 5 caracteres'),
+usuarioRouter.post('/',    
     body('email')
         .not()
         .isEmpty()
@@ -41,13 +35,7 @@ usuarioRouter.post('/',
     UsuarioController.saveUsuario);
 
 
-usuarioRouter.put('/:id',
-    body('username')
-        .not()
-        .isEmpty()
-        .withMessage('El campo username es obligatorio')
-        .isLength({ min: 5 })
-        .withMessage('El campo username debe tener almenos 5 caracteres'),
+usuarioRouter.put('/:id',    
     body('email')
         .not()
         .isEmpty()
