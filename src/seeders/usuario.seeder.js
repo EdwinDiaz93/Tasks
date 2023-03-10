@@ -7,7 +7,7 @@ const UsuarioSeeder = async () => {
     Db.model('Usuario').bulkCreate(usuarioData).then(
         (usuarios) => {
             usuarios.forEach(usuario => (
-                usuario.setRols(Math.ceil(Math.random() * 3))
+                usuario.setRols(1)
             ))
         }
     );

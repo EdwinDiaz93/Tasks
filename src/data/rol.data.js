@@ -3,7 +3,7 @@ const rolData = [
         name: 'SuperAdmin'
     },
     {
-        name: 'Admin'
+        name: 'Company'
     },
     {
         name: 'User'
