@@ -1,7 +1,6 @@
 const { request, response } = require('express');
 const bcrypt = require('bcryptjs');
 const Db = require('../models');
-const { usuarioData } = require('../data');
 
 
 class UsuarioController {

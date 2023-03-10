@@ -6,7 +6,7 @@ const rolData = [
         name: 'Company'
     },
     {
-        name: 'User'
+        name: 'Employee'
     },
 ];
 

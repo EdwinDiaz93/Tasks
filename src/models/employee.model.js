@@ -20,7 +20,7 @@ const Employee = Db.define('Employee', {
         allowNull: false,
     },
     phone: {
-        type: DataTypes.DOUBLE,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     slug: {

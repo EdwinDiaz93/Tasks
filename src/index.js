@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 
 const Db = require('./models');
-const Seeder = require('./seeders');
+// const Seeder = require('./seeders');
 
 const app = express();
 
@@ -18,10 +18,10 @@ app.listen(process.env.PORT, async () => {
     await Db.sync();
 
     // ejecuta un create-drop para limpiar todas las tablas
-    await Db.sync({force:true});
+    // await Db.sync({force:true});
 
     // llena las tablas con informacion
-    await Seeder();
+    // await Seeder();
 
 // console.log(`Application running on port: ${process.env.PORT}`);
 });
