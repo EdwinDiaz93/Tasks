@@ -3,13 +3,13 @@ const Db = require('../models');
 const bcryptjs = require('bcryptjs');
 
 
-class CompanyController {
+class EmployeeController {
 
-    static async getCompanies(req = request, res = response) {
+    static async getEmployees(req = request, res = response) {
         try {
             const { page = 1, limit = 10 } = req.query;
             const offset = (page - 1) * limit;
-            const { count, rows } = await Db.model('Company').findAndCountAll({
+            const { count, rows } = await Db.model('Employee').findAndCountAll({
                 offset,
                 limit,
                 attributes: { exclude: ['UsuarioId', 'AddressId'] }
@@ -37,21 +37,21 @@ class CompanyController {
             })
         }
     }
-    static async getCompany(req = request, res = response) {
+    static async getEmployee(req = request, res = response) {
         try {
             const { id } = req.params;
-            const company = await Db.model('Company').findByPk(id, {
+            const employee = await Db.model('Employee').findByPk(id, {
                 attributes: { exclude: ['UsuarioId'] }
             });
-            if (!company)
+            if (!employee)
                 return res
                     .status(404)
-                    .json({ ok: false, msg: `company with id ${id} not found` });
+                    .json({ ok: false, msg: `employee with id ${id} not found` });
 
-            const address = await company.getAddress();
+            const address = await employee.getAddress();
 
             return res.json({
-                ...company.toJSON(),
+                ...employee.toJSON(),
                 AddressId: address.toJSON(),
             });
 
@@ -64,35 +64,36 @@ class CompanyController {
             })
         }
     }
-    static async saveCompany(req = request, res = response) {
+    static async saveEmployee(req = request, res = response) {
         try {
-            const { name, owner_name, slug, summary, country, state, city, address, email, password } = req.body;
+            const { first_name, last_name, salary, phone, slug, country, state, city, address, email, password } = req.body;
 
-            const [usuario, company] = await Promise.all(
+            const [usuario, employee] = await Promise.all(
                 [
                     Db.model('Usuario').findOne({ where: { email } }),
-                    Db.model('Company').findOne({ where: { slug } })
+                    Db.model('Employee').findOne({ where: { slug } })
                 ]
             );
 
             if (usuario)
                 return res.status(400).json({
                     ok: false,
-                    msg: `The email ${email} already taken`
+                    msg: 'Email already taken'
                 });
 
-            if (company)
+            if (employee)
                 return res.status(400).json({
                     ok: false,
-                    msg: `The slug ${slug} already taken`,
+                    msg: 'Slug already taken'
                 });
 
-            Db.model('Company').create({
-                name,
-                owner_name,
+            Db.model('Employee').create({
+                first_name,
+                last_name,
+                salary,
+                phone,
                 slug,
-                summary
-            }).then(async (company) => {
+            }).then(async (employee) => {
                 const [addr, usuario] = await Promise.all([
                     Db.model('Address').create({
                         country,
@@ -105,13 +106,13 @@ class CompanyController {
                         password: bcryptjs.hashSync(password, bcryptjs.genSaltSync(10)),
                     }),
                 ]);
-                usuario.setRols(2);
-                company.setAddress(addr);
-                company.setUsuario(usuario);
+                usuario.setRols(3);
+                employee.setAddress(addr);
+                employee.setUsuario(usuario);
             });
             return res.status(201).json({
                 ok: true,
-                msg: 'Company created'
+                msg: 'Employee created'
             })
         } catch (error) {
             console.log(error);
@@ -121,39 +122,41 @@ class CompanyController {
             })
         }
     }
-    static async updateCompany(req = request, res = response) {
+    static async updateEmployee(req = request, res = response) {
         try {
-            const { name, owner_name, slug, summary, country, state, city, address, email, password } = req.body;
+            const { first_name, last_name, salary, phone, slug, country, state, city, address, email, password } = req.body;
             const { id } = req.params;
-            const company = await Db.model('Company').findByPk(id);
 
-            if (!company)
+            const employee = await Db.model('Employee').findByPk(id);
+
+            if (!employee)
                 return res.status(404).json({
                     ok: false,
-                    msg: `Company with id ${id} not found`,
+                    msg: `Employee with id ${id} not found`,
                 });
 
-            const [usuario, usuarioEmail, companySlug] = await Promise.all([
-                company.getUsuario(),
+            const [usuario, usuarioEmail, employeeSlug] = await Promise.all([
+                employee.getUsuario(),
                 Db.model('Usuario').findOne({ where: { email } }),
-                Db.model('Company').findOne({ where: { slug } })]
+                Db.model('Employee').findOne({ where: { slug } })]
             );
 
-            if (companySlug && company.slug !== companySlug.slug)
-                return res.status(400).json({ ok: false, msg: 'There is another company with this slug' });
+            if (employeeSlug && employee.slug !== employeeSlug.slug)
+                return res.status(400).json({ ok: false, msg: 'There is another employee with this slug' });
 
             if (usuarioEmail && usuario.email !== usuarioEmail.email)
-                return res.status(400).json({ ok: false, msg: 'There is another company with this email' });
+                return res.status(400).json({ ok: false, msg: 'There is another employee with this email' });
 
-            company.update({
-                name,
-                owner_name,
+            employee.update({
+                first_name,
+                last_name,
+                salary,
+                phone,
                 slug,
-                summary,
-            }).then(async (company) => {
+            }).then(async (employee) => {
                 const [usuario, addr] = await Promise.all([
-                    company.getUsuario(),
-                    company.getAddress(),
+                    employee.getUsuario(),
+                    employee.getAddress(),
                 ]);
 
                 await Promise.all([
@@ -173,7 +176,7 @@ class CompanyController {
 
             return res.status(200).json({
                 ok: true,
-                msg: 'Company updated'
+                msg: 'Compañia actualizada correctamente'
             });
         } catch (error) {
             console.log(error);
@@ -183,7 +186,7 @@ class CompanyController {
             })
         }
     }
-    static async deleteCompany(req = request, res = response) {
+    static async deleteEmployee(req = request, res = response) {
         try {
             const { id } = req.params;
             const company = await Db.model('Company').findByPk(id);
@@ -191,20 +194,21 @@ class CompanyController {
             if (!company)
                 return res.status(404).json({
                     ok: false,
-                    msg: `Company with id ${id} not found`
+                    msg: `compañia con id: ${id} no encontrada`
                 });
-
-            await Promise.all([
-                Db.model('Address').destroy({ where: { id: company.AddressId } }),
-                Db.model('Usuario').destroy({ where: { id: company.UsuarioId } }),
+            const [usuario, address] = await Promise.all([
+                company.getUsuario(),
+                company.getAddress(),
             ]);
 
+            if (usuario) await usuario.destroy();
+            if (address) await address.destroy();
 
             await company.destroy();
 
             res.status(204).json({
                 ok: true,
-                msg: 'Company deleted',
+                msg: 'Compania eliminada correctamente',
             })
         } catch (error) {
             console.log(error);
@@ -217,4 +221,4 @@ class CompanyController {
 }
 
 
-module.exports = CompanyController;
+module.exports = EmployeeController;
