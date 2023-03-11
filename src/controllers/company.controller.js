@@ -40,7 +40,9 @@ class CompanyController {
     static async getCompany(req = request, res = response) {
         try {
             const { id } = req.params;
-            const company = await Db.model('Company').findByPk(id);
+            const company = await Db.model('Company').findByPk(id, {
+                attributes: { exclude: ['UsuarioId'] }
+            });
             if (!company)
                 return res
                     .status(404)
