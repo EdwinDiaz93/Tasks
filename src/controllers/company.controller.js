@@ -12,6 +12,7 @@ class CompanyController {
             const { count, rows } = await Db.model('Company').findAndCountAll({
                 offset,
                 limit,
+                order: [['id', 'DESC']],
                 attributes: { exclude: ['UsuarioId', 'AddressId'] }
             });
 
@@ -151,21 +152,22 @@ class CompanyController {
                 slug,
                 summary,
             }).then(async (company) => {
-                const [usuario, addr] = await Promise.all([
-                    company.getUsuario(),
-                    company.getAddress(),
-                ]);
 
                 await Promise.all([
-                    usuario.update({
+                    Db.model('Usuario').update({
                         email,
                         password: bcryptjs.hashSync(password, bcryptjs.genSaltSync(10)),
+                    }, {
+                        where: { id: company.UsuarioId }
                     }),
-                    addr.update({
+
+                    Db.model('Address').update({
                         country,
                         state,
                         city,
                         address,
+                    }, {
+                        where: { id: company.AddressId }
                     }),
                 ]);
 

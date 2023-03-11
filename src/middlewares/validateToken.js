@@ -17,6 +17,12 @@ const validateToken = async (req = request, res = response, next) => {
         req.usuario = usuario;
         next();
     } catch (error) {
+        if (error && error.expiredAt) {
+            return res.status(400).json({
+                ok: false,
+                msg: `Token expirado ${error.expiredAt}`,
+            })
+        }
         console.log(error);
         return res.status(500).json({
             ok: false,

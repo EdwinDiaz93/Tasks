@@ -5,12 +5,13 @@ const EmployeeSeeder = require('./employee.seeder');
 
 
 const Seeder = async () => {
+    const size = 50;
     await Promise.all(
         [
             RolSeeder(),
             UsuarioSeeder(),
-            CompanySeeder(5),
-            EmployeeSeeder(5)
+            CompanySeeder(size),
+            EmployeeSeeder(size)
         ]
     );
 }

@@ -26,6 +26,12 @@ Address.hasOne(Company);
 Employee.belongsTo(Address);
 Address.hasOne(Employee);
 
+// Relacion empleado compañia
+
+Company.hasMany(Employee, { onDelete: 'CASCADE' });
+Employee.belongsTo(Company, { onDelete: 'CASCADE' });
+
+
 const models = {
     Usuario,
     Rol,

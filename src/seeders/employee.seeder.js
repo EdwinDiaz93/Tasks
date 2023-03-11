@@ -7,7 +7,6 @@ const CompanySeeder = async (totalRows) => {
 
 
     for (let index = 0; index < totalRows; index++) {
-
         Db.model('Employee').create({
             first_name: faker.name.firstName(),
             last_name: faker.name.lastName(),
@@ -30,6 +29,7 @@ const CompanySeeder = async (totalRows) => {
                         })
                     ]);
                 usuario.setRols(3);
+                employee.setCompany(Math.ceil(Math.random() * totalRows))
                 employee.setAddress(address);
                 employee.setUsuario(usuario);
             }
