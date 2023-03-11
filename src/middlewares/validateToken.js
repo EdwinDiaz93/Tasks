@@ -10,9 +10,20 @@ const validateToken = async (req = request, res = response, next) => {
             msg: 'Token not found',
         });
     }
-    const usuario = await verifyToken(token);    
-    req.usuario = usuario;
-    next();
+
+    try {
+
+        const usuario = await verifyToken(token);
+        req.usuario = usuario;
+        next();
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error validando el token'
+        })
+    }
+
 }
 
 module.exports = validateToken;

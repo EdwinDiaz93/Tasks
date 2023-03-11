@@ -13,6 +13,7 @@ Rol.belongsToMany(Usuario, { through: 'usuario_rol' })
 Usuario.hasOne(Company);
 Company.belongsTo(Usuario)
 
+
 // Relacion empleado y usuario
 Usuario.hasOne(Employee);
 Employee.belongsTo(Usuario)

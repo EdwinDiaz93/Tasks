@@ -10,11 +10,11 @@ companyRouter.get('/',
     [validateToken, validateRols(['SuperAdmin'])],
     CompanyController.getCompanies);
 
-companyRouter.get('/:slug',
+companyRouter.get('/:id',
     [validateToken, validateRols(['SuperAdmin'])],
     CompanyController.getCompany);
 
-companyRouter.delete('/:slug',
+companyRouter.delete('/:id',
     [validateToken, validateRols(['SuperAdmin'])],
     CompanyController.deleteCompany);
 
@@ -25,7 +25,7 @@ companyRouter.post('/',
     CompanyController.saveCompany);
 
 
-companyRouter.put('/:slug',
+companyRouter.put('/:id',
     ...CompanyValidator,
     [validateToken, validateRols(['SuperAdmin']), validatorRequest],
     CompanyController.updateCompany);
